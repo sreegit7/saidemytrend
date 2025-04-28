@@ -44,7 +44,23 @@ pipeline {                                    // 1  // Defines the start of the 
                     sh "${scannerHome}/bin/sonar-scanner"  
                                               // Runs the SonarQube scanner tool
                 }                             // Ends the withSonarQubeEnv block
-            }                                 // 10  // Ends the steps block for 'SonarQube analysis' stage
-        }
-     }
-   }                                     // 8  // Ends the 'SonarQube analysis' stage
+            }
+         }
+        stage("Quality Gate") {               // 11  // Creates a stage named 'Quality Gate'
+            steps {                           // 12  // Defines the steps that will be executed in this stage
+                script {                      // 13  // Allows running custom Groovy script inside the pipeline
+                    timeout(time: 1, unit: 'HOURS') {
+                                              // Sets a timeout of 1 hour for the quality gate check
+                        def qg = waitForQualityGate()
+                                              // Waits for the quality gate result from SonarQube
+                        if (qg.status != 'OK') {
+                                              // Checks if the quality gate status is not OK
+                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                                              // Aborts the pipeline if the quality gate fails
+                        }
+		}
+	   }
+	}
+      }
+    }
+  }
