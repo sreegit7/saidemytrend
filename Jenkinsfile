@@ -45,6 +45,6 @@ pipeline {                                    // 1  // Defines the start of the 
                                               // Runs the SonarQube scanner tool
                 }                             // Ends the withSonarQubeEnv block
             }
-       }}
+       }
     }
   }
